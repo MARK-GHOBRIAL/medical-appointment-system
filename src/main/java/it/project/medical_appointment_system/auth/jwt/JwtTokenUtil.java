@@ -53,20 +53,25 @@ public class JwtTokenUtil {
         return expiration.before(new Date());
     }
 
-    // Genera un token JWT per l'utente, includendo i ruoli
     public String generateToken(UserDetails userDetails) {
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        List<String> roles = authorities.stream()
-                                        .map(GrantedAuthority::getAuthority)
-                                        .collect(Collectors.toList());
+        try {
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            List<String> roles = authorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
 
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .claim("roles", roles) // Aggiunge i ruoli come claim
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
+            return Jwts.builder()
+                    .setSubject(userDetails.getUsername())
+                    .claim("roles", roles) // Aggiunge i ruoli come claim
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
+                    .signWith(SignatureAlgorithm.HS256, secret)
+                    .compact();
+        } catch (Exception e) {
+            System.err.println("Errore durante la generazione del token JWT: " + e.getMessage());
+            throw new RuntimeException("Errore nella generazione del token", e);
+
+        }
     }
 
     // Estrae i ruoli dal token JWT
