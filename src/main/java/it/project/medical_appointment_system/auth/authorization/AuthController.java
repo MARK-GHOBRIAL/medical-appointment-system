@@ -32,7 +32,7 @@ public class AuthController {
         appUserService.registerUser(
                 registerRequest.getUsername(),
                 registerRequest.getPassword(),
-                Role.ROLE_USER  // Singolo ruolo invece di Set
+                Role.ROLE_USER
         );
         return ResponseEntity.ok("Registrazione avvenuta con successo");
     }
@@ -41,7 +41,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         log.info("Login request:");
         String token = appUserService.authenticateUser(
-                loginRequest.getEmail(),
+                loginRequest.getUsername(),
                 loginRequest.getPassword()
         );
         return ResponseEntity.ok(new AuthResponse(token));
