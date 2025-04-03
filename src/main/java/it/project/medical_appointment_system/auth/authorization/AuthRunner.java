@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 @Slf4j
@@ -30,21 +29,21 @@ public class AuthRunner implements ApplicationRunner {
                 "Admin User",
                 "admin@clinica.com",
                 "adminpassword",
-                Role.ROLE_ADMIN
+                Role.ADMIN
         );
 
         createUserIfNotExists(
                 "Regular User",
                 "user@clinica.com",
                 "userpassword",
-                Role.ROLE_USER
+                Role.USER
         );
 
         createUserIfNotExists(
                 "Dr. Mario Rossi",
                 "doctor@clinica.com",
                 "doctorpassword",
-                Role.ROLE_DOCTOR
+                Role.DOCTOR
         );
     }
 

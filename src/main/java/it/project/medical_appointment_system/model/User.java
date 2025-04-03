@@ -1,5 +1,6 @@
 package it.project.medical_appointment_system.model;
 
+import it.project.medical_appointment_system.auth.app_user.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

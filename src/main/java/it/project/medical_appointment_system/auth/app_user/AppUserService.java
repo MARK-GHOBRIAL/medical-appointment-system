@@ -29,7 +29,7 @@ public class AppUserService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public AppUser registerUser(String name,String username, String email, String password, Role role) {
+    public AppUser registerUser(String name, String email, String password, Role role) {
         if (appUserRepository.existsByUsername(email)) {
             throw new EntityExistsException("Email già in uso");
         }
@@ -47,16 +47,22 @@ public class AppUserService {
         return appUserRepository.findByUsername(username);
     }
 
-    public String authenticateUser(String username, String password)  {
+    public String authenticateUser(String username, String password) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
 
+            if (!authentication.isAuthenticated()) {
+                throw new SecurityException("Autenticazione fallita");
+            }
+
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             return jwtTokenUtil.generateToken(userDetails);
         } catch (AuthenticationException e) {
             throw new SecurityException("Credenziali non valide", e);
+        } catch (Exception e) {
+            throw new SecurityException("Errore nella generazione del token", e);
         }
     }
 

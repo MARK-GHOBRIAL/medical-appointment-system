@@ -1,10 +1,10 @@
 package it.project.medical_appointment_system.service.impl;
 
 
+import it.project.medical_appointment_system.auth.app_user.Role;
 import it.project.medical_appointment_system.dto.DoctorDTO;
 import it.project.medical_appointment_system.exception.ResourceNotFoundException;
 import it.project.medical_appointment_system.model.Doctor;
-import it.project.medical_appointment_system.model.Role;
 import it.project.medical_appointment_system.model.User;
 import it.project.medical_appointment_system.repository.DoctorRepository;
 import it.project.medical_appointment_system.repository.UserRepository;

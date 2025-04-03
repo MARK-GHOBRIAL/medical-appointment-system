@@ -1,13 +1,13 @@
 package it.project.medical_appointment_system.service.impl;
 
 
+import it.project.medical_appointment_system.auth.app_user.Role;
 import it.project.medical_appointment_system.dto.AppointmentDTO;
 import it.project.medical_appointment_system.exception.AppointmentConflictException;
 import it.project.medical_appointment_system.exception.ResourceNotFoundException;
 import it.project.medical_appointment_system.exception.UnauthorizedAccessException;
 import it.project.medical_appointment_system.model.Appointment;
 import it.project.medical_appointment_system.model.Doctor;
-import it.project.medical_appointment_system.model.Role;
 import it.project.medical_appointment_system.model.User;
 import it.project.medical_appointment_system.repository.AppointmentRepository;
 import it.project.medical_appointment_system.repository.DoctorRepository;
@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
-
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     private final UserService userService;

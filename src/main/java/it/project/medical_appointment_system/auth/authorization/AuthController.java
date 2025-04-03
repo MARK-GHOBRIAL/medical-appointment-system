@@ -44,7 +44,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        log.info("Login request:");
+        log.info("Login request:"+ loginRequest.getUsername());
+
         String token = appUserService.authenticateUser(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
@@ -52,5 +53,6 @@ public class AuthController {
         AppUser user = appUserService.loadUserByUsername(loginRequest.getUsername());
         UserDTO userDto = modelMapper.map(user, UserDTO.class);
 
-        return ResponseEntity.ok(new AuthResponse(token, "Bearer", userDto));    }
+        return ResponseEntity.ok(new AuthResponse(token, "Bearer", userDto));
+    }
 }
