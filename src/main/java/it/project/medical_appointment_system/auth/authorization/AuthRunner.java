@@ -4,6 +4,7 @@ package it.project.medical_appointment_system.auth.authorization;
 import it.project.medical_appointment_system.auth.app_user.AppUser;
 import it.project.medical_appointment_system.auth.app_user.AppUserService;
 import it.project.medical_appointment_system.auth.app_user.Role;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
+@Slf4j
 public class AuthRunner implements ApplicationRunner {
 
     @Autowired
@@ -24,22 +26,44 @@ public class AuthRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // Creazione dell'utente admin se non esiste
-        Optional<AppUser> adminUser = appUserService.findByUsername("admin");
-        if (adminUser.isEmpty()) {
-            appUserService.registerUser("admin", "adminpwd", Role.ROLE_ADMIN);
-        }
+        createUserIfNotExists(
+                "Admin User",
+                "admin@clinica.com",
+                "adminpassword",
+                Role.ROLE_ADMIN
+        );
 
-        // Creazione dell'utente user se non esiste
-        Optional<AppUser> normalUser = appUserService.findByUsername("user");
-        if (normalUser.isEmpty()) {
-            appUserService.registerUser("user", "userpwd", Role.ROLE_USER);
-        }
+        createUserIfNotExists(
+                "Regular User",
+                "user@clinica.com",
+                "userpassword",
+                Role.ROLE_USER
+        );
 
-        // Creazione dell'utente doctor se non esiste
-        Optional<AppUser> doctorUser = appUserService.findByUsername("doctor");
-        if (doctorUser.isEmpty()) {
-            appUserService.registerUser("doctor", "doctorpwd", Role.ROLE_DOCTOR);
+        createUserIfNotExists(
+                "Dr. Mario Rossi",
+                "doctor@clinica.com",
+                "doctorpassword",
+                Role.ROLE_DOCTOR
+        );
+    }
+
+    private void createUserIfNotExists(String name, String email, String password, Role role) {
+        try {
+            Optional<AppUser> existingUser = appUserService.findByUsername(email);
+            if (existingUser.isEmpty()) {
+                appUserService.registerUser(
+                        name,
+                        email,
+                        passwordEncoder.encode(password),
+                        role
+                );
+                log.info("Creato utente {} con ruolo {}", email, role);
+            } else {
+                log.info("Utente {} già esistente, saltato", email);
+            }
+        } catch (Exception e) {
+            log.error("Errore creazione utente {}: {}", email, e.getMessage());
         }
     }
 }

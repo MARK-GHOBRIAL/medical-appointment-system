@@ -29,13 +29,14 @@ public class AppUserService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public AppUser registerUser(String username, String password, Role role) {
-        if (appUserRepository.existsByUsername(username)) {
-            throw new EntityExistsException("Username già in uso");
+    public AppUser registerUser(String name, String email, String password, Role role) {
+        if (appUserRepository.existsByUsername(email)) {
+            throw new EntityExistsException("Email già in uso");
         }
 
         AppUser appUser = new AppUser();
-        appUser.setUsername(username);
+        appUser.setName(name);
+        appUser.setUsername(email);
         appUser.setPassword(passwordEncoder.encode(password));
         appUser.setRole(role);
         return appUserRepository.save(appUser);

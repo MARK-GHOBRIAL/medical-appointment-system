@@ -3,9 +3,12 @@ package it.project.medical_appointment_system.auth.authorization;
 import it.project.medical_appointment_system.auth.app_user.AppUser;
 import it.project.medical_appointment_system.auth.app_user.AppUserService;
 import it.project.medical_appointment_system.auth.app_user.Role;
+import it.project.medical_appointment_system.dto.JwtAuthResponse;
+import it.project.medical_appointment_system.dto.UserDTO;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +24,7 @@ import java.util.Set;
 public class AuthController {
 
     private final AppUserService appUserService;
+    private final ModelMapper modelMapper;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/current-user")
@@ -30,11 +34,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
         appUserService.registerUser(
-                registerRequest.getUsername(),
+                registerRequest.getName(),
+                registerRequest.getEmail(),
                 registerRequest.getPassword(),
-                Role.ROLE_USER
+                registerRequest.getRole()
         );
-        return ResponseEntity.ok("Registrazione avvenuta con successo");
+        return ResponseEntity.ok("{\"Benvenuto\": \"Registrazione avvenuta con successo\"}");
     }
 
     @PostMapping("/login")
@@ -44,6 +49,8 @@ public class AuthController {
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
         );
-        return ResponseEntity.ok(new AuthResponse(token));
-    }
+        AppUser user = appUserService.loadUserByUsername(loginRequest.getUsername());
+        UserDTO userDto = modelMapper.map(user, UserDTO.class);
+
+        return ResponseEntity.ok(new AuthResponse(token, "Bearer", userDto));    }
 }
