@@ -2,6 +2,7 @@ package it.project.medical_appointment_system.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalTime;
 @Table(name = "appointments")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Appointment {
 
     @Id

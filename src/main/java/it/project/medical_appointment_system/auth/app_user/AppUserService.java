@@ -9,13 +9,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class AppUserService {
+public class AppUserService implements UserDetailsService {
 
     @Autowired
     private AppUserRepository appUserRepository;
@@ -69,9 +70,10 @@ public class AppUserService {
 
     public AppUser loadUserByUsername(String username)  {
         AppUser appUser = appUserRepository.findByUsername(username)
-            .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con username: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con username: " + username));
 
 
         return appUser;
     }
 }
+

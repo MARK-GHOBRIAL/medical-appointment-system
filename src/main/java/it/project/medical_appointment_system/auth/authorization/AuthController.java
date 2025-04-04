@@ -12,9 +12,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -42,17 +44,24 @@ public class AuthController {
         return ResponseEntity.ok("{\"Benvenuto\": \"Registrazione avvenuta con successo\"}");
     }
 
+
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        log.info("Login request:"+ loginRequest.getUsername());
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            String token = appUserService.authenticateUser(
+                    loginRequest.getUsername(),
+                    loginRequest.getPassword()
+            );
+            AppUser user = appUserService.loadUserByUsername(loginRequest.getUsername());
+            UserDTO userDto = modelMapper.map(user, UserDTO.class);
 
-        String token = appUserService.authenticateUser(
-                loginRequest.getUsername(),
-                loginRequest.getPassword()
-        );
-        AppUser user = appUserService.loadUserByUsername(loginRequest.getUsername());
-        UserDTO userDto = modelMapper.map(user, UserDTO.class);
-
-        return ResponseEntity.ok(new AuthResponse(token, "Bearer", userDto));
+            return ResponseEntity.ok(new AuthResponse(token, "Bearer", userDto));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                            "error", "Login failed",
+                            "message", "Invalid username or password"
+                    ));
+        }
     }
 }
