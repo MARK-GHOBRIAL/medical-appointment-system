@@ -25,9 +25,6 @@ public class AppUserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     public AppUser registerUser(String name, String email, String password, Role role) {
@@ -48,7 +45,7 @@ public class AppUserService implements UserDetailsService {
         return appUserRepository.findByUsername(username);
     }
 
-    public String authenticateUser(String username, String password) {
+    public String authenticateUser(String username, String password, AuthenticationManager authenticationManager) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
