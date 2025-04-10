@@ -43,59 +43,52 @@ public class AuthController {
                 registerRequest.getName(),
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
-                registerRequest.getRole()
-        );
+                registerRequest.getRole());
 
         // Genera il token dopo la registrazione
         String token = appUserService.authenticateUser(
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
-                authenticationManager
-        );
+                authenticationManager);
 
         RegistrationResponse response = new RegistrationResponse(
                 "Registrazione avvenuta con successo",
                 registeredUser.getEmail(),
                 registeredUser.getName(),
                 registeredUser.getRole().name(),
-                token
-        );
+                token);
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String token = appUserService.authenticateUser(
-                request.getUsername(),
-                request.getPassword(),
-                authenticationManager
-        );
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            // Authenticate the user and get the token
+            String token = appUserService.authenticateUser(
+                    request.getUsername(),
+                    request.getPassword(),
+                    authenticationManager);
+
+            // Fetch user details (like email, id, name, role)
+            AppUser user = appUserService.loadUserByUsername(request.getUsername());
+
+            // Create a response object with token and user details
+            Map<String, Object> response = Map.of(
+                    "token", token,
+                    "user", Map.of(
+                            "id", user.getId(),
+                            "email", user.getEmail(),
+                            "name", user.getName(),
+                            "role", user.getRole().name()));
+
+            return ResponseEntity.ok(response);
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                            "error", "Login failed",
+                            "message", "Invalid username or password"));
+        }
     }
 }
 
-
-
-/*
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-    try {
-        String token = appUserService.authenticateUser(
-            loginRequest.getUsername(),
-            loginRequest.getPassword()
-        );
-        AppUser user = appUserService.loadUserByUsername(loginRequest.getUsername());
-        UserDTO userDto = modelMapper.map(user, UserDTO.class);
-
-        return ResponseEntity.ok(new AuthResponse(token, "Bearer", userDto));
-    } catch (AuthenticationException e) {
-        // Restituisce un JSON di errore invece di lanciare un'eccezione
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(Map.of(
-                "error", "Login failed",
-                "message", "Invalid username or password"
-            ));
-    }
-}
- */

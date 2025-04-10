@@ -12,9 +12,4 @@ public class JwtAuthResponse {
     private String tokenType = "Bearer";
     private UserDTO user;
 
-    /* Costruttore alternativo senza tokenType
-    public JwtAuthResponse(String accessToken, UserDTO user) {
-        this.accessToken = accessToken;
-        this.user = user;
-    }*/
 }

@@ -1,6 +1,5 @@
 package it.project.medical_appointment_system.controller;
 
-
 import it.project.medical_appointment_system.dto.DoctorDTO;
 import it.project.medical_appointment_system.service.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/doctors")
@@ -16,6 +16,7 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final Logger log = Logger.getLogger(DoctorController.class.getName());
 
     @GetMapping
     public ResponseEntity<List<DoctorDTO>> getAllDoctors() {
@@ -30,6 +31,7 @@ public class DoctorController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorDTO> createDoctor(@RequestBody DoctorDTO doctorDTO) {
+        log.info("Received DoctorDTO: " + doctorDTO);
         return ResponseEntity.ok(doctorService.createDoctor(doctorDTO));
     }
 

@@ -1,6 +1,5 @@
 package it.project.medical_appointment_system.security;
 
-
 import it.project.medical_appointment_system.auth.app_user.AppUser;
 import it.project.medical_appointment_system.auth.app_user.AppUserRepository;
 import jakarta.servlet.FilterChain;
@@ -44,11 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (userOptional.isPresent()) {
                     AppUser appUser = userOptional.get();
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    appUser,
-                                    null,
-                                    appUser.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            appUser,
+                            null,
+                            appUser.getAuthorities());
 
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
